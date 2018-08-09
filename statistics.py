@@ -5,8 +5,24 @@ from nltk.corpus import stopwords
 from sentence_extracor import segment_sentences, segment_sentences_tok
 
 def tokenize_me(file_text, process_sents=False, write_sents=False, save_tokens=False, load_tokens=False, verbose=False, depth="raw"):
+    """
+    Perform tokenization of dataset file with nltk word tokinizer.
+        file_text: path to datafile
+        process_sents: need to determine sentances
+        write_sents: save determined sentences in file
+        save_tokens: save tokens in file
+        load_tokens: load tokens in file (for later santence segmantation, for example)
+        verbose
+        depth:  raw - return list of raw tokens withour preprocess
+                punc - return list of tokens with delited punctuation        
+                stopw - return list of tokens woth delited stop-words
+                uniq - return list of unique tokens
+    """
+    f = open(file_text)
+    data = f.read().decode("utf8")
     tokens = []
     #firstly let's apply nltk tokenization
+    # if dataset was tokenized, try to load tokens
     if load_tokens:
         print("Loading tokens...")
         f = open("./datasets/tokens.txt")
@@ -17,6 +33,7 @@ def tokenize_me(file_text, process_sents=False, write_sents=False, save_tokens=F
     else:
         print("Tokinization...")
         tokens = nltk.word_tokenize(file_text)
+    # save tokens in file
     if save_tokens and load_tokens == False:
         print("Saving tokens...")
         f = open("./datasets/tokens.txt", 'w')
@@ -25,10 +42,12 @@ def tokenize_me(file_text, process_sents=False, write_sents=False, save_tokens=F
                 continue
             f.write(i.encode("utf8") + "\n")
         f.close()
+    # if something went wrong
     if len(tokens) == 0:
         print "No tokens is load/tokenized."
         return 0
     if verbose: print("Raw tokens count: %d" % len(tokens))
+    # determine and save sentences in file
     if process_sents:
         sents = segment_sentences(tokens)
         if write_sents:
@@ -44,6 +63,7 @@ def tokenize_me(file_text, process_sents=False, write_sents=False, save_tokens=F
             count += len(i)
         print("Avarage length of sentence: %d" % (count/len(sents)))
         '''
+    # if not need any preprocess on tokens
     if depth == "raw": return tokens
 
     #let's delete punctuation symbols
@@ -60,7 +80,4 @@ def tokenize_me(file_text, process_sents=False, write_sents=False, save_tokens=F
     if verbose: print("Unique tokens count: %d" % len(list(set(tokens))))
     if depth == "uniq": return tokens
     
-f = open("./datasets/dataset_without_tags.txt")
-data = f.read().decode("utf8")
-
-tokenize_me(data, load_tokens=True)
+tokenize_me("./datasets/dataset_without_tags.txt", load_tokens=True)
