@@ -63,6 +63,8 @@ def segment_sentences(words):
     return sents
     
 def segment_sentences_tok(words):
+    # words: list of tokens
+    # retrn: list of list of tokens, where each element of first list is a sentence represented as a list of tokens
     try:
         f = open('sentence_classifyer.pickle', 'rb')
         classifier = pickle.load(f)
