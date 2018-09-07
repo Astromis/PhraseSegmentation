@@ -65,6 +65,7 @@ def get_tsne(arrays, data=None, restrict=1000):
     plt.show()
 
 def corrupt(word):
+    # make sure, that function works correct
     first = word[0]
     sec = word[1]
     #print word + " : " + first + sec + word[3:]
