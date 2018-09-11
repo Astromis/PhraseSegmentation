@@ -37,7 +37,7 @@ def train_classifyer():
     size = int(len(featuresets) * 0.1)
     train_set, test_set = featuresets[size:], featuresets[:size]
     classifier = nltk.NaiveBayesClassifier.train(train_set)
-    print "Training done! Classification accuracy: ", nltk.classify.accuracy(classifier, test_set)
+    print("Training done! Classification accuracy: ", nltk.classify.accuracy(classifier, test_set))
     return classifier
 
 def segment_sentences(words):
@@ -63,8 +63,6 @@ def segment_sentences(words):
     return sents
     
 def segment_sentences_tok(words):
-    # words: list of tokens
-    # retrn: list of list of tokens, where each element of first list is a sentence represented as a list of tokens
     try:
         f = open('sentence_classifyer.pickle', 'rb')
         classifier = pickle.load(f)
