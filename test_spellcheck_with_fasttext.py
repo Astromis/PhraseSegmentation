@@ -5,6 +5,7 @@ import gensim
 import numpy as np
 import warnings
 import statistics
+import string
 import os 
 from sentence_extracor import segment_sentences_tok
 from difflib import SequenceMatcher
@@ -18,9 +19,9 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
 # this code must run with python3.x
 #TODO: clean corpus from punctuations!
-# other corrupted function
 # devide this file
 # take a look on paper http://www.dialog-21.ru/media/3450/derezaovetal.pdf and fasttext
+# compare self trained fasttext model with facebook provided model
 def compute_accuracy(orig, corrected):
     # compute spell correction accuracy
     # input:
@@ -40,8 +41,13 @@ def baseline_spellchecker(model, tokens, func):
     for i in tokens:
         try:
             cor_word = func(i)
+        except:     
+            #print("Exception function!")
+            continue
+        try:
             corrected_ = model.most_similar(cor_word)[0][0]
         except:
+            #print("Exception most_similar!")
             continue
         corrected.append(corrected_)
         original.append(i)
@@ -114,17 +120,33 @@ def corrupt_random_permutation(word, permut_amount=1):
         corrupted_word = corrupted_word[:index] + corrupted_word[index+1] + corrupted_word[index] + corrupted_word[index+2:]
     return  corrupted_word
     
-def corrupt_random_insertion(word, insert_amount):
-    pass
+def corrupt_random_insertion(word, insert_amount=1):
+    #test this
+    corrupted_word = word
+    for i in range(insert_amount):
+        index = np.random.randint(0, len(corrupted_word)-1)
+        first = corrupted_word[index]
+        sec = corrupted_word[index]
+        insert = np.random.choice(list("qwertyuiopasdfghjklzxcvbnm"))
+        corrupted_word = corrupted_word[:index] + insert + corrupted_word[index:]
+    #print(corrupted_word)
+    return corrupted_word
 
-def corrupt_random_deletion(word, del_amount):
-    pass
+def corrupt_random_deletion(word, del_amount=1):
+    #test this
+    corrupted_word = word
+    for i in range(del_amount):
+        index = np.random.randint(0, len(corrupted_word)-1)
+        first = corrupted_word[index]
+        sec = corrupted_word[index+1]
+        corrupted_word = corrupted_word[:index] + corrupted_word[index+1:]
+    return corrupted_word
 
 def main():
     model, tokens = get_fasttest_model("./fasttext", "./nitshe.txt")
+    #print("test",corrupt_random_deletion("test"))
 
-
-    baseline_spellchecker(model, tokens, corrupt_random_permutation)
+    baseline_spellchecker(model, tokens, corrupt_random_insertion)
     
     # code below compute t-SNE for original and corrupted words
     '''
